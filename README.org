@@ -7,11 +7,14 @@ A nix derivation for the ROMS plotting toolbox.
 For more information on ROMS, see the [[http://www.myroms.org/][official website]]. Information about the
 plotting toolbox can be found on its [[https://www.myroms.org/wiki/Plotting_Package_Installation][ROMS wiki page]].
 
-*Caveats:* All of the ROMS source repos are private, so you will need create a
- =myroms= account before you can download them. Then, once you have successfully
- downloaded the plotting package, this derivation's ~src~ attribute will have to
- be set against your local checkout of the sources. Note that naively setting
- ~src~ to a path like this renders the derivation non-reproducible (since the
- source isn't checked against a hash). In the future I'd like to change this to
- set ~src~ to some more intelligent fetcher that actually hashes the source.
-  
+* Caveats
+- All of the ROMS source repos are private, so you will need create a
+  =myroms= account before you can download them. Then, once you have successfully
+  downloaded the plotting package, this derivation's ~src~ attribute will have to
+  be set against your local checkout of the sources. Note that naively setting
+  ~src~ to a path like this renders the derivation non-reproducible (since the
+  source isn't checked against a hash). In the future I'd like to change this to
+  set ~src~ to some more intelligent fetcher that actually hashes the source.
+- This derivation also requires that you have my [[https://github.com/tviti/NCL.nix][NCL.nix]] derivation, and you'll
+  need to make sure that its location is set properly in the ~callPackage~
+  invocation.
