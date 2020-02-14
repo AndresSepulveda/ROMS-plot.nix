@@ -1,5 +1,6 @@
-{ cairo, callPackage, curl, fetchgit, gfortran, hdf5-fortran, makeWrapper
-, netcdf, netcdfcxx4, netcdffortran, perl, stdenv, xorg }:
+{ cairo, callPackage, curl, fetchgit, gfortran, hdf5-fortran, imagemagick,
+  makeWrapper , netcdf, netcdfcxx4, netcdffortran, perl, stdenv, tcsh,
+  xorg }:
 
 let
   NCL = callPackage ../NCL.nix { };
@@ -32,7 +33,7 @@ in stdenv.mkDerivation rec {
     netcdfcxx4
     perl
   ] ++ xlibs;
-  propagatedBuildInputs = [ NCL ];
+  propagatedBuildInputs = [ NCL imagemagick tcsh ];
 
   prePatch = ''
     substituteInPlace src/Compilers/Darwin-gfortran.mk \
@@ -64,11 +65,23 @@ in stdenv.mkDerivation rec {
   hardeningDisable = [ "format" ];
 
   installPhase = ''
-    echo "Dummy install phase"
-  '';
-  
-  postInstall = ''
+    cp Bin/ncgm2gif.sh $out/bin/ncgm2gif.sh
+    cp Bin/ncgm2png.sh $out/bin/ncgm2png.sh
+    
+    substituteInPlace $out/bin/ncgm2gif.sh \
+      --replace "#!/bin/csh" "#!${tcsh.out}/bin/tcsh"
+
+    substituteInPlace $out/bin/ncgm2png.sh \
+      --replace "#!/bin/csh" "#!${tcsh.out}/bin/tcsh"
+
+    substituteInPlace $out/bin/ncgm2gif.sh \
+      --replace "/opt/local/bin/convert" "${imagemagick.out}/bin/convert"
+
+    substituteInPlace $out/bin/ncgm2png.sh \
+      --replace "/opt/local/bin/convert" "${imagemagick.out}/bin/convert"
+
     for i in $out/bin/*; do
+      echo "Wrapping ''${i}"
       wrapProgram $i \
         --set NCARG_ROOT ${NCL.out}
     done
