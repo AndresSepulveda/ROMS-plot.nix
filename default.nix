@@ -35,14 +35,19 @@ in stdenv.mkDerivation rec {
   ] ++ xlibs;
   propagatedBuildInputs = [ NCL imagemagick tcsh ];
 
-  prePatch = ''
-    substituteInPlace src/Compilers/Darwin-gfortran.mk \
+  prePatch = let
+    compiler = if stdenv.isDarwin then
+      "src/Compilers/Darwin-gfortran.mk"
+    else
+      "src/Compilers/Linux-gfortran.mk";
+  in ''
+    substituteInPlace ${compiler} \
      --replace "\$(shell which \''${FC})" "${gfortran}/bin/gfortran"
 
-    substituteInPlace src/Compilers/Darwin-gfortran.mk \
+    substituteInPlace ${compiler} \
       --replace "/usr/bin/cpp" "${gfortran}/bin/cpp"
 
-    substituteInPlace src/Compilers/Darwin-gfortran.mk \
+    substituteInPlace ${compiler} \
       --replace "LIBS += -L/opt/X11/lib -lX11" "LIBS += -lX11 -lcairo -lfreetype"
   '';
 
