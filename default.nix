@@ -1,6 +1,5 @@
-{ cairo, callPackage, curl, fetchgit, gfortran, hdf5-fortran, imagemagick,
-  makeWrapper , netcdf, netcdfcxx4, netcdffortran, perl, stdenv, tcsh,
-  xorg }:
+{ cairo, callPackage, curl, fetchgit, gfortran, hdf5-fortran, imagemagick
+, makeWrapper, netcdf, netcdfcxx4, netcdffortran, perl, stdenv, tcsh, xorg }:
 
 let
   NCL = callPackage ../NCL.nix { };
@@ -75,7 +74,7 @@ in stdenv.mkDerivation rec {
   installPhase = ''
     cp Bin/ncgm2gif.sh $out/bin/ncgm2gif.sh
     cp Bin/ncgm2png.sh $out/bin/ncgm2png.sh
-    
+
     substituteInPlace $out/bin/ncgm2gif.sh \
       --replace "#!/bin/csh" "#!${tcsh.out}/bin/tcsh"
 
