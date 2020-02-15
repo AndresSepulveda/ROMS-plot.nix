@@ -49,6 +49,9 @@ in stdenv.mkDerivation rec {
 
     substituteInPlace ${compiler} \
       --replace "LIBS += -L/opt/X11/lib -lX11" "LIBS += -lX11 -lcairo -lfreetype"
+
+    patchShebangs src/Bin/sfmakedepend
+    patchShebangs src/Bin/cpp_clean
   '';
 
   patches = [ ./0001-On-master-any-make.patch ];
