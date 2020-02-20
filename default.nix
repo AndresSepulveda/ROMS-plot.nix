@@ -46,12 +46,19 @@ in stdenv.mkDerivation rec {
     substituteInPlace ${compiler} \
       --replace "/usr/bin/cpp" "${gfortran}/bin/cpp"
 
-    substituteInPlace ${compiler} \
-      --replace "LIBS += -L/opt/X11/lib -lX11" "LIBS += -lX11 -lcairo -lfreetype"
-
     patchShebangs src/Bin/sfmakedepend
     patchShebangs src/Bin/cpp_clean
-  '';
+  '' + (if stdenv.isDarwin then ''
+    substituteInPlace ${compiler} \
+      --replace "LIBS += -L/opt/X11/lib -lX11" \
+                "LIBS += -L${cairo}/lib -lX11 -lcairo -lfreetype"
+  '' else ''
+
+    substituteInPlace ${compiler} \
+      --replace "LIBS += -L/usr/X11R6/lib64 -lX11" \
+                "LIBS += -L${cairo}/lib -lX11 -lcairo -lfreetype"
+   '');
+
 
   patches = [ ./0001-On-master-any-make.patch ];
 
